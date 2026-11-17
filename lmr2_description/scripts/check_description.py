@@ -18,7 +18,7 @@ assert root.attrib['name'] == 'lmr2'
 links = {item.get('name') for item in root.findall('link')}
 joints = {item.get('name'): item.get('type') for item in root.findall('joint')}
 
-assert {'base_link', 'left_wheel_link', 'right_wheel_link', 'lidar_link', 'imu_link'} <= links
+assert {'base_link', 'left_wheel_link', 'right_wheel_link', 'caster_wheel_link', 'left_camera_link', 'right_camera_link', 'lidar_link', 'imu_link'} <= links
 assert joints['left_wheel_joint'] == joints['right_wheel_joint'] == 'continuous'
 
 plugins = {x.get('name') for x in root.findall('.//plugin')}
