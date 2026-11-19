@@ -136,13 +136,13 @@
     </gazebo>
 
     <gazebo reference="right_camera_link">
-        <sensor name="camera" type="camera">
+        <sensor name="stereo_camera_right" type="camera">
             <pose> 0 0 0 0 0 0 </pose>
             <visualize>true</visualize>
-            <update_rate>10</update_rate>
+            <update_rate>30</update_rate>
             <camera>
-                <camera_info_topic>camera/camera_info</camera_info_topic>
-                <horizontal_fov>1.089</horizontal_fov>
+                <camera_info_topic>/lmr2/stereo_camera/right/camera_info</camera_info_topic>
+                <horizontal_fov>1.274</horizontal_fov>
                 <image>
                     <format>R8G8B8</format>
                     <width>640</width>
@@ -150,11 +150,34 @@
                 </image>
                 <clip>
                     <near>0.05</near>
-                    <far>8.0</far>
+                    <far>20.0</far>
                 </clip>
             </camera>
-            <topic>camera/image_raw</topic>
+            <topic>/lmr2/stereo_camera/right/image_raw</topic>
             <gz_frame_id>right_camera_link_optical</gz_frame_id>
+        </sensor>
+    </gazebo>
+
+    <gazebo reference="left_camera_link">
+        <sensor name="stereo_camera_left" type="camera">
+            <pose> 0 0 0 0 0 0 </pose>
+            <visualize>true</visualize>
+            <update_rate>30</update_rate>
+            <camera>
+                <camera_info_topic>/lmr2/stereo_camera/left/camera_info</camera_info_topic>
+                <horizontal_fov>1.274</horizontal_fov>
+                <image>
+                    <format>R8G8B8</format>
+                    <width>640</width>
+                    <height>480</height>
+                </image>
+                <clip>
+                    <near>0.05</near>
+                    <far>20.0</far>
+                </clip>
+            </camera>
+            <topic>/lmr2/stereo_camera/left/image_raw</topic>
+            <gz_frame_id>left_camera_link_optical</gz_frame_id>
         </sensor>
     </gazebo>
 
