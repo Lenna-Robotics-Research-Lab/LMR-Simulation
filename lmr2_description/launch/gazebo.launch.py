@@ -17,11 +17,17 @@ def generate_launch_description():
     world = str(package / 'worlds' / 'lmr2_world.sdf')
     description = ParameterValue(Command(['xacro ', urdf]), value_type=str)
     rviz_cfg = str(package / 'rviz' / 'gazebo.rviz')
-    ros_gz_image_bridge = Node(
+    ros_gz_right_image_bridge = Node(
         package="ros_gz_image",
         executable="image_bridge",
-        arguments=["/camera/image_raw"]
+        arguments=["/lmr2/stereo_camera/right/image_raw"]
     )
+    ros_gz_left_image_bridge = Node(
+        package="ros_gz_image",
+        executable="image_bridge",
+        arguments=["/lmr2/stereo_camera/left/image_raw"]
+    )
+    
     return LaunchDescription([
         DeclareLaunchArgument('rviz', default_value='true', description='Start RViz2'),
         DeclareLaunchArgument('x', default_value='0.0'),
@@ -45,5 +51,6 @@ def generate_launch_description():
         Node(package='rviz2', executable='rviz2', name='rviz2', output='screen',
              arguments=['-d', rviz_cfg], parameters=[{'use_sim_time': True}],
              condition=IfCondition(LaunchConfiguration('rviz'))),
-        ros_gz_image_bridge,
+        ros_gz_right_image_bridge,
+        ros_gz_left_image_bridge,
     ])

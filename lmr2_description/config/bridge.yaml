@@ -34,7 +34,13 @@
   ros_type_name: sensor_msgs/msg/Imu
   gz_type_name: gz.msgs.IMU
   direction: GZ_TO_ROS
-- ros_gz_image_bridge: camera/camera_info
-  gz_topic_name: camera/camera_info
+- ros_gz_image_bridge: lmr2/stereo_camera/right/camera_info
+  gz_topic_name: lmr2/stereo_camera/right/camera_info
   ros_type_name: sensor_msgs/msg/CameraInfo
   gz_type_name: gz.msgs.CameraInfo
+  direction: GZ_TO_ROS
+- ros_gz_image_bridge: lmr2/stereo_camera/left/camera_info
+  gz_topic_name: lmr2/stereo_camera/left/camera_info
+  ros_type_name: sensor_msgs/msg/CameraInfo
+  gz_type_name: gz.msgs.CameraInfo
+  direction: GZ_TO_ROS
