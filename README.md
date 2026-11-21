@@ -1,77 +1,144 @@
-<div align="justify">
+<div align="center">
 
 # LENNA Mobile Robot Simulation
+[![Static Badge](https://img.shields.io/badge/Ubuntu-22.04_Jammy_/_20.04_Focal-orange?logo=ubuntu)](https://releases.ubuntu.com/jammy/) [![Static Badge](https://img.shields.io/badge/ROS2-Jazzy-blue?logo=ros)](https://docs.ros.org/en/humble/index.html) [![Static Badge](https://img.shields.io/badge/ROS-Noetic-violet?logo=ros)](http://wiki.ros.org/noetic) [![Static Badge](https://img.shields.io/badge/Gazebo-Ignition_/_Classic-yellow)](https://gazebosim.org/api/gazebo/6/)  
+</div>
+
+<div align="justify">
 
 LENNA Mobile Robot is a differential-drive mobile robot platform intended for research and education. The repository maintains equivalent ROS1 and ROS2 simulations to support both legacy and modern robotics workflows.
 
 <p align="center">
-  <img src="docs/media/urdf-rviz-visual.png" alt="LMR1 RViz URDF" width="1080">
+  <img src="docs/media/lmr2_simulation.gif" alt="LMR2 RViz URDF" width="1080">
 </p>
 
 </div>
 
-<table>
-<tr>
-<td width="50%" valign="top">
+## ROS2 &nbsp;&nbsp; [![Static Badge](https://img.shields.io/badge/Ubuntu-22.04_Jammy-orange?logo=ubuntu)](https://releases.ubuntu.com/jammy/) [![Static Badge](https://img.shields.io/badge/ROS2-Jazzy-blue?logo=ros)](https://docs.ros.org/en/humble/index.html) [![Static Badge](https://img.shields.io/badge/Gazebo-Ignition-yellow)](https://gazebosim.org/api/gazebo/6/)
 
-<p align="center">
-  <img src="docs/media/urdf-viewer.gif" alt="LMR1 URDF Viewer" width="400">
-</p>
+#### Requirements
 
-</td>
-<td width="50%" valign="top">
+- Ubuntu 24.04 (Noble)
+- [ROS2 Jazzy](https://docs.ros.org/en/jazzy/Installation.html) (Desktop install)
+- Gazebo Harmonic (installed with `ros-jazzy-ros-gz`)
+- `colcon` and `rosdep`
 
-<div align="justify">
-  
-Use the [`Interactive URDF Viewer`](https://lenna-robotics-research-lab.github.io/LMR1-Simulation/) to load and explore the robot model online. The joint sliders and TF visualizer tools are available from the control panel on the left side of the viewer. 
+Install the core simulation dependencies (Gazebo bridges, robot description tools, and the TurtleBot3 worlds):
 
-</div>
+```bash
+$ sudo apt update
+$ sudo apt install -y \
+    python3-colcon-common-extensions python3-rosdep \
+    ros-jazzy-ros-gz \
+    ros-jazzy-xacro \
+    ros-jazzy-robot-state-publisher \
+    ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-tf2-ros \
+    ros-jazzy-rviz2 \
+    ros-jazzy-teleop-twist-keyboard \
+    ros-jazzy-turtlebot3-gazebo
+```
+
+Install the SLAM and navigation dependencies (`slam_toolbox` and Nav2):
+
+```bash
+$ sudo apt install -y \
+    ros-jazzy-slam-toolbox \
+    ros-jazzy-navigation2 \
+    ros-jazzy-nav2-bringup
+```
+
+Install the stereo depth and point cloud dependencies:
+
+```bash
+$ sudo apt install -y \
+    ros-jazzy-cv-bridge \
+    ros-jazzy-message-filters \
+    python3-opencv \
+    python3-numpy
+```
+
+Alternatively, you can resolve any remaining package dependencies with `rosdep` from the root of your workspace:
+
+```bash
+$ sudo rosdep init   # only needed once per machine
+$ rosdep update
+$ rosdep install --from-paths src --ignore-src -r -y --rosdistro jazzy
+
+#### Quick Start
+
+Copy the `lmr2_description` and `lmr2_stereo_depth` package from this repository into your ROS workspace and build the package with `colcon`.
+
+```bash
+$ colcon build --symlink-install --packages-select lmr2_description lmr2_stereo_depth
+$ source install/setup.bash
+```
+
+
+##### 🖥️ RViz Display
+
+To visualize the LMR2 URDF model in RViz2, use the `display.launch.py` file:
+
+```bash
+$ ros2 launch lmr2_description display.launch.py
+```
+
+##### 🎮 Gazebo Simulation Turtlebot House
+
+To spawn the LMR2 robot in Gazebo using the default TurtleBot world, launch `gazebo.launch.py`:
+
+```bash
+$ ros2 launch lmr2_description gazebo.launch.py world:=turtlebot3_house x:=1.5 y:=-2.5 yaw:=1.57
+```
+##### 🗺️ SLAM and Navigation Implementation
+
+SLAM and autonomous navigation with Nav2 run as three separate processes. Open **three terminals**, source the workspace in each, and start them in the following order.
+
+**Terminal 1: Gazebo simulation**
+
+Start the simulation first and wait until the robot has spawned in the world:
+
+```bash
+$ ros2 launch lmr2_description gazebo.launch.py
+```
+
+**Terminal 2: SLAM**
+
+Start `slam_toolbox` to build the map and publish the `/map` topic and the `map → odom` transform:
+
+```bash
+$ ros2 launch lmr2_description slam.launch.py
+```
+
+**Terminal 3: Nav2 navigation**
+
+Start the Nav2 stack for path planning and control:
+
+```bash
+$ ros2 launch lmr2_description nav2.launch.py
+```
+
+When all three are running, use the **2D Goal Pose** tool in RViz2 to send a navigation goal. The robot plans a path, drives to the goal, and expands the map as it explores.
 
 > [!NOTE]\
-> The LENNA Mobile Robot model may take several seconds to load fully.
+> Keep the launch order: Gazebo first, then SLAM, then Nav2. Nav2 relies on the `/map` topic and `map → odom` transform from `slam_toolbox`, so it will not activate until the simulation and SLAM are up. Nav2 parameters can be changed in `lmr2_description/config/nav2_params.yaml` or passed with `params_file:=<path>`.
 
-</td>
-</tr>
-</table>
+##### 📷 Depth Sensing and Point Cloud
 
-## Repository Structure
+The `lmr2_stereo_depth` package computes depth and a 3D point cloud from the simulated stereo camera pair. It attaches to an **already running** simulation and does not start Gazebo itself, so launch Gazebo first and then start the stereo depth module in a new terminal:
 
-    .
-    ├── docs/                    # Reading Materials and Figures
-    │   └── media/
-    │
-    ├── web_viewer/
-    │   ├── public/              # Files and Figures for the Online Viewer
-    │   ├── index.html 
-    │   ├── main.html 
-    │   ├── package.json 
-    │   └── vite.config.js/ 
-    │
-    ├── lmr1_description/        # ROS1 Package for LMR1 URDF and Simulation
-    │   ├── launch/
-    │   │   ├── display.launch
-    │   │   ├── gazebo.launch
-    │   │   └── ...
-    │   ├── meshes/              # 3D Meshes in the COLLADA Format
-    │   │   ├── base.dae
-    │   │   └── wheel.dae
-    │   ├── urdf/                # XACRO/URDF Modular Descriptions Files
-    │   │   ├── common/
-    │   │   ├── components/
-    │   │   └── robot.urdf.xacro
-    │   ├── CMakeLists.txt
-    │   └── package.xml
-    │
-    └── README.md                # Entry Point, Quick Start
+```bash
+# Terminal 1
+$ ros2 launch lmr2_description gazebo.launch.py
+
+# Terminal 2
+$ ros2 launch lmr2_stereo_depth lmr2_stereo_sim.launch.py
+```
+
+Add `rviz:=true` to open the depth visualization in RViz2. Processing parameters are read from `lmr2_stereo_depth/config/stereo_depth.yaml` and can be overridden with `params_file:=<path>`. The depth module can also run alongside SLAM and Nav2 in a fourth terminal.
 
 
-<div align="justify">
-
-## ROS1 &nbsp;&nbsp; [![Static Badge](https://img.shields.io/badge/Ubuntu-20.04_Focal-orange?logo=ubuntu)](https://releases.ubuntu.com/focal/) [![Static Badge](https://img.shields.io/badge/ROS-Noetic-violet?logo=ros)](http://wiki.ros.org/noetic) [![Static Badge](https://img.shields.io/badge/Gazebo-Classic-green)](https://classic.gazebosim.org/)
-
-
-
-
+## ROS and Gazebo Classic &nbsp;&nbsp; [![Static Badge](https://img.shields.io/badge/Ubuntu-20.04_Focal-orange?logo=ubuntu)](https://releases.ubuntu.com/focal/) [![Static Badge](https://img.shields.io/badge/ROS-Noetic-violet?logo=ros)](http://wiki.ros.org/noetic) [![Static Badge](https://img.shields.io/badge/Gazebo-Classic-green)](https://classic.gazebosim.org/)
  
 The ROS1 version provides a complete simulation environment for the LMR1 platform using the ROS Noetic ecosystem.
 
@@ -157,10 +224,6 @@ $ roslaunch lmr1_description navigation.launch
 </td>
 </tr>
 </table>
-
-## ROS2 &nbsp;&nbsp; [![Static Badge](https://img.shields.io/badge/Ubuntu-22.04_Jammy-orange?logo=ubuntu)](https://releases.ubuntu.com/jammy/) [![Static Badge](https://img.shields.io/badge/ROS2-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/index.html) [![Static Badge](https://img.shields.io/badge/Gazebo-Ignition-yellow)](https://gazebosim.org/api/gazebo/6/)
-
-UNDER DEVELOPMENT!
 
 ## Citation
 
