@@ -1,0 +1,47 @@
+# Parameters for lmr2_stereo_depth/stereo_depth_node
+# Geometry of the simulated cameras (lmr2_description/urdf/robot.urdf.xacro):
+#   640x480, horizontal_fov 1.274 rad  -> fx = fy ~ 432.8 px
+#   camera_offset_y 0.030              -> baseline 0.060 m
+#   disparity(px, full res) = 432.8 * 0.06 / Z  ~ 26 / Z[m]
+stereo_depth_node:
+  ros__parameters:
+    use_sim_time: true
+
+    # ---- inputs (as published by lmr2_description/gazebo.launch.py)
+    left_topic: /lmr2/stereo_camera/left/image_raw
+    right_topic: /lmr2/stereo_camera/right/image_raw
+    left_info_topic: /lmr2/stereo_camera/left/camera_info
+    right_info_topic: /lmr2/stereo_camera/right/camera_info
+    left_frame: left_camera_link_optical
+    right_frame: right_camera_link_optical
+
+    # ---- calibration
+    # camera_info : K/D from Gazebo CameraInfo, R/T from TF (URDF)  [default]
+    # npz         : file in Lenna-Stereo-Camera calibration.py format
+    calibration_mode: camera_info
+    calibration_file: ""
+    calibration_unit: mm          # npz only: unit of T used during calibration
+    fallback_hfov: 1.274          # used if no CameraInfo arrives
+    baseline: 0.06                # used if TF between the cameras is not available
+    camera_info_timeout: 5.0
+    tf_timeout: 5.0
+
+    # ---- algorithm (StereoSGBM 3WAY + right matcher + WLS, as in the original node)
+    downscale: 0.5                # matching at 320x240
+    num_disparities: 64           # at the downscaled size -> closest depth ~0.2 m. multiple of 16
+    block_size: 7
+    use_wls: true                 # needs cv2.ximgproc (OpenCV contrib)
+    wls_lambda: 8000.0
+    wls_sigma: 1.5
+    mask_left_band: false          # drop the unmatched left band (num_disparities columns)
+    sync_queue_size: 10
+    sync_slop: 0.02               # Gazebo renders both cameras at the same sim time
+
+    # ---- outputs
+    depth_topic: /lmr2/stereo/depth/image_raw
+    depth_info_topic: /lmr2/stereo/depth/camera_info
+    points_topic: /lmr2/stereo/points
+    disparity_color_topic: /lmr2/stereo/disparity/color
+    cloud_stride: 2               # 1 = every pixel (307k points), 2 = 1/4, 4 = 1/16
+    min_depth: 0.15
+    max_depth: 2.0                # stereo error grows with Z^2; ~0.35 m at 6 m for 0.25 px
