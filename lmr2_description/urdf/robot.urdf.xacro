@@ -67,7 +67,7 @@
         <odom_topic>/lmr2/odom</odom_topic>
         <tf_topic>/lmr2/tf</tf_topic>
         <frame_id>odom</frame_id>
-        <child_frame_id>base_link</child_frame_id>
+        <child_frame_id>base_footprint</child_frame_id>
         <odom_publish_frequency>50</odom_publish_frequency>
         <max_linear_velocity>0.8</max_linear_velocity>
         <max_angular_velocity>4.0</max_angular_velocity>
