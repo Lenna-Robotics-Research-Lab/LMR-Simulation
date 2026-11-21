@@ -3,9 +3,20 @@ Panels:
     Help Height: 70
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
-      Splitter Ratio: 0.5
-    Tree Height: 318
+      Expanded:
+        - /TF1/Frames1
+      Splitter Ratio: 0.5029411911964417
+    Tree Height: 151
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
 Visualization Manager:
   Class: ""
   Displays:
@@ -45,6 +56,10 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         base_link:
           Alpha: 1
           Show Axes: false
@@ -92,18 +107,27 @@ Visualization Manager:
       Mass Properties:
         Inertia: false
         Mass: false
-      Name: RobotModel
+      Name: LMR2 Model
       TF Prefix: ""
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz_default_plugins/Axes
+      Enabled: false
+      Length: 0.4000000059604645
+      Name: Base Link
+      Radius: 0.019999999552965164
+      Reference Frame: base_link
+      Value: false
     - Class: rviz_default_plugins/TF
       Enabled: true
       Filter (blacklist): ""
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        base_footprint:
+          Value: true
         base_link:
           Value: true
         caster_wheel_link:
@@ -111,17 +135,19 @@ Visualization Manager:
         imu_link:
           Value: true
         left_camera_link:
-          Value: true
+          Value: false
         left_camera_link_optical:
           Value: true
         left_wheel_link:
           Value: true
         lidar_link:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
         right_camera_link:
-          Value: true
+          Value: false
         right_camera_link_optical:
           Value: true
         right_wheel_link:
@@ -132,24 +158,27 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
+        map:
+          {}
         odom:
-          base_link:
-            caster_wheel_link:
-              {}
-            imu_link:
-              {}
-            left_camera_link:
-              left_camera_link_optical:
+          base_footprint:
+            base_link:
+              caster_wheel_link:
                 {}
-            left_wheel_link:
-              {}
-            lidar_link:
-              {}
-            right_camera_link:
-              right_camera_link_optical:
+              imu_link:
                 {}
-            right_wheel_link:
-              {}
+              left_camera_link:
+                left_camera_link_optical:
+                  {}
+              left_wheel_link:
+                {}
+              lidar_link:
+                {}
+              right_camera_link:
+                right_camera_link_optical:
+                  {}
+              right_wheel_link:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -170,10 +199,10 @@ Visualization Manager:
       Max Intensity: 0
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: LD19 LaserScan
+      Name: Range Sensor
       Position Transformer: XYZ
       Selectable: true
-      Size (Pixels): 3
+      Size (Pixels): 5
       Size (m): 0.02500000037252903
       Style: Points
       Topic:
@@ -190,9 +219,9 @@ Visualization Manager:
       Class: rviz_default_plugins/CameraInfo
       Color: 85; 255; 255
       Edge color: 125; 125; 125
-      Enabled: true
+      Enabled: false
       Far clip: 1
-      Name: CameraInfo
+      Name: Left Camera Info
       Not show side polygons: true
       Show edges: true
       Show polygons: true
@@ -203,14 +232,39 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /lmr2/stereo_camera/left/camera_info
+      Value: false
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Far Plane Distance: 100
+      Image Rendering: background and overlay
+      Name: Left Camera Image
+      Overlay Alpha: 0.5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /lmr2/stereo_camera/left/image_raw
       Value: true
+      Visibility:
+        Base Link: true
+        Grid: true
+        LMR2 Model: true
+        Left Camera Info: true
+        Map: true
+        Range Sensor: true
+        Right Camera Image: true
+        Right Camera Info: true
+        TF: true
+        Value: false
+      Zoom Factor: 1
     - Alpha: 0.5
       Class: rviz_default_plugins/CameraInfo
       Color: 85; 255; 255
       Edge color: 125; 125; 125
-      Enabled: true
+      Enabled: false
       Far clip: 1
-      Name: CameraInfo
+      Name: Right Camera Info
       Not show side polygons: true
       Show edges: true
       Show polygons: true
@@ -221,34 +275,12 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /lmr2/stereo_camera/right/camera_info
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/Camera
       Enabled: true
       Far Plane Distance: 100
       Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /lmr2/stereo_camera/left/image_raw
-      Value: true
-      Visibility:
-        Camera: true
-        CameraInfo: true
-        Grid: true
-        LD19 LaserScan: true
-        RobotModel: true
-        TF: true
-        Value: true
-      Zoom Factor: 1
-    - Class: rviz_default_plugins/Camera
-      Enabled: true
-      Far Plane Distance: 100
-      Image Rendering: background and overlay
-      Name: Camera
+      Name: Right Camera Image
       Overlay Alpha: 0.5
       Topic:
         Depth: 5
@@ -258,18 +290,44 @@ Visualization Manager:
         Value: /lmr2/stereo_camera/right/image_raw
       Value: true
       Visibility:
-        Camera: true
-        CameraInfo: true
+        Base Link: true
         Grid: true
-        LD19 LaserScan: true
-        RobotModel: true
+        LMR2 Model: true
+        Left Camera Image: true
+        Left Camera Info: true
+        Map: true
+        Range Sensor: true
+        Right Camera Info: true
         TF: true
-        Value: true
+        Value: false
       Zoom Factor: 1
+    - Alpha: 0.699999988079071
+      Binary representation: false
+      Binary threshold: 100
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -283,36 +341,37 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 2.5
+      Class: rviz_default_plugins/FPS
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
-      Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.550000011920929
-      Target Frame: <Fixed Frame>
-      Value: Orbit (rviz_default_plugins)
-      Yaw: 0.75
+      Pitch: 1.5697963237762451
+      Position:
+        X: 2.0474765300750732
+        Y: -0.2189565747976303
+        Z: 8.950138092041016
+      Target Frame: map
+      Value: FPS (rviz_default_plugins)
+      Yaw: -1.5700000524520874
     Saved: ~
 Window Geometry:
-  Camera:
-    collapsed: false
   Displays:
     collapsed: false
-  Height: 900
+  Height: 844
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000015600000326fc0200000003fb000000100044006900730070006c006100790073010000003f000001c4000000cc00fffffffb0000000c00430061006d0065007200610100000209000000920000001700fffffffb0000000c00430061006d00650072006101000002a1000000c40000001700ffffff000003b80000032600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-  Width: 1300
-  X: 99
-  Y: 131
+  Left Camera Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd000000010000000000000156000002eefc0200000005fb000000100044006900730070006c006100790073010000003f0000011d000000cc00fffffffb00000022004c006500660074002000430061006d00650072006100200049006d0061006700650100000162000000e30000001700fffffffb0000002400520069006700680074002000430061006d00650072006100200049006d006100670065010000024b000000e20000001700fffffffb0000000a005600690065007700730200000278000003db0000015600000105fb0000000a00560069006500770073020000026a000003db0000015600000123000002bc000002ee00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Right Camera Image:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1048
+  X: 632
+  Y: 81
